@@ -10,8 +10,11 @@ export class PolicyGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const user = request.user;
 
+        console.log('request is ', request);
+
         if (!user) return false;
-        const resource = request.body.resourceId ? { userId: request.body.userId } : null;
+        const targetId = request.body?.resourceId || request.params?.id;
+        const resource = targetId ? { userId: targetId } : null;
         const isAllowed = PolicyEngine.evaluate({
             user,
             resource,

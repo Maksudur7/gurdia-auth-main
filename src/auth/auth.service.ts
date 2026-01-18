@@ -96,7 +96,6 @@ export class AuthService {
   }
 
   async regsterUser(createAuthDto: CreateAuthDto, ip: string) {
-    console.log('this is regester paige ');
     const existingUser = await this.prisma.user.findUnique({
       where: { email: createAuthDto.email },
     });
@@ -142,9 +141,9 @@ export class AuthService {
         throw new Error('Email already in use');
       }
     }
-
+    const roleName = createAuthDto.role || 'USER'
     let userRole = await this.prisma.role.findUnique({
-      where: { name: 'USER' },
+      where: { name: roleName },
     });
 
     const targetRole = createAuthDto.role || 'USER';
@@ -255,16 +254,43 @@ export class AuthService {
   }
 
   async updateOneUsers(id: string, updateAuthDto: UpdateAuthDto) {
-    return this.prisma.user.update({
-      where: { id },
-      data: {
-        name: updateAuthDto.name,
-        email: updateAuthDto.email,
-        password: updateAuthDto.password,
-        image: updateAuthDto.imageUrl,
-      },
-    });
+  console.log('Target ID:', id);
+
+  const user = await this.prisma.user.findUnique({ where: { id } });
+  if (!user) {
+    throw new Error(`User with ID ${id} not found`);
   }
+
+  if (updateAuthDto.password) {
+    const salt = await bcrypt.genSalt(10);
+    updateAuthDto.password = await bcrypt.hash(updateAuthDto.password, salt);
+  }
+
+  const updateData: any = {
+    name: updateAuthDto.name,
+    email: updateAuthDto.email,
+    password: updateAuthDto.password,
+    image: updateAuthDto.imageUrl,
+  };
+
+  if (updateAuthDto.role) {
+    const roleRecord = await this.prisma.role.findUnique({
+      where: { name: updateAuthDto.role as string },
+    });
+
+    if (roleRecord) {
+      updateData.roleId = roleRecord.id;
+    } else {
+      throw new Error(`Role ${updateAuthDto.role} not found in database`);
+    }
+  }
+
+  return this.prisma.user.update({
+    where: { id },
+    data: updateData,
+    include: { role: true },
+  });
+}
 
   async deletUser(userId: string, ip: string) {
     const user = await this.prisma.user.update({

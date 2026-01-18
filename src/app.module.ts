@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { PrismaService } from './prisma/prisma.service.js';
 import { ConfigModule, ConfigService } from '@nestjs/config'; 
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { UsersService } from './users/users.service';
 
 @Global()
 @Module({
@@ -25,6 +26,6 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     PrismaModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserService, PrismaService],
+  providers: [AppService, UserService, PrismaService, UsersService],
 })
 export class AppModule { }
