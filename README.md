@@ -1,99 +1,76 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Gurdia-Auth: Adaptive Security & RBAC System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a professional Authentication and Authorization system built with **NestJS**, **Prisma**, **PostgreSQL**, **Redis**, and **Kong API Gateway**. It features Adaptive Security (OTP based on IP) and Role-Based Access Control (RBAC).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 1. Architecture
+The system follows a microservices-ready architecture for scalability and security:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
 
-```bash
-$ npm install
-```
+* **App Service:** NestJS application handling business logic and REST APIs.
+* **API Gateway:** **Kong Gateway** acts as the entry point, managing request routing and security layers.
+* **Database:** **PostgreSQL** for persistent storage of Users, Roles, Permissions, and Audit Logs.
+* **Caching/OTP:** **Redis** for high-speed storage of temporary OTPs (5-minute expiry).
+* **Containerization:** The entire stack is containerized using **Docker Compose** for easy deployment.
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 2. RBAC Logic (Role-Based Access Control)
+The system implements a granular RBAC model where access is determined by specific permissions rather than just role names:
 
-# watch mode
-$ npm run start:dev
+* **User-to-Role:** Each user is assigned one role (e.g., ADMIN, USER).
+* **Role-to-Permission:** Each role is mapped to multiple permissions.
+* **Flexibility:** This allows the administrator to change what a "USER" can do by simply adding or removing permissions from the role in the database without changing the code.
 
-# production mode
-$ npm run start:prod
-```
+---
 
-## Run tests
+## 3. Permission Flow
+The system ensures security through a custom interceptor/guard layer:
 
-```bash
-# unit tests
-$ npm run test
+1.  **Request:** User sends a request with a JWT token in the Authorization header.
+2.  **Guard:** The `PermissionsGuard` intercepts the request.
+3.  **Extraction:** It extracts the `userId` from the JWT and fetches the user's role and associated permissions from the database.
+4.  **Validation:** It checks if the required permission (defined via `@Permissions()` decorator in the controller) exists in the user's permission list.
+5.  **Access:** If valid, the request proceeds. Otherwise, a `403 Forbidden` error is returned.
 
-# e2e tests
-$ npm run test:e2e
 
-# test coverage
-$ npm run test:cov
-```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 4. Policy Handling & Adaptive Security
+* **Adaptive OTP:** The system monitors the user's `lastLoginIp`. If a login attempt is detected from a new IP address, the system generates a 6-digit OTP, saves it in Redis, and sends it to the user's email via **Nodemailer**.
+* **Audit Logging:** Every security-related event (Login, OTP trigger, Registration, Permission Failure) is logged in the `AuditLog` table, providing a full security trail.
+* **JWT Policy:** Access tokens are generated using a secure secret and include user identity and role information.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+---
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+## 5. Sample Data Structure
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Roles & Permissions
+| Role | Permissions | Description |
+| :--- | :--- | :--- |
+| **ADMIN** | `CREATE_USER`, `READ_USER`, `UPDATE_USER`, `DELETE_USER`, `VIEW_LOGS` | Full system access. |
+| **USER** | `READ_USER`, `UPDATE_SELF` | Restricted access. |
 
-## Resources
+### Sample Users
+* **Admin User:** `admin@gurdia.com` | Role: `ADMIN`
+* **Standard User:** `user@gurdia.com` | Role: `USER`
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-"# gurdia-auth" 
+## How to Run
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Maksudur7/gurdia-auth-main.git
+    ```
+2.  **Configure Environment:** Create a `.env` file based on `.env.example`.
+3.  **Start with Docker:**
+    ```bash
+    docker compose up -d --build
+    ```
+4.  **Database Setup:**
+    ```bash
+    docker compose exec gurdia_app npx prisma db push
+    ```
