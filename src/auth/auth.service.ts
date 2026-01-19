@@ -6,6 +6,7 @@ import { Redis } from 'ioredis';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateAuthDto } from './dto/create-auth.dto.js';
 import { UpdateAuthDto } from './dto/update-auth.dto.js';
+import { sendOtpEmail } from 'src/common/mail.service.js';
 
 @Injectable()
 export class AuthService {
@@ -86,7 +87,7 @@ export class AuthService {
     };
     const token = await this.jwtService.signAsync(payload);
 
-    await this.redisClient.set(`session:${user.id}`, token);
+    await this.redisClient.set(`session:${user.id}`, token, 'EX', 86400);
     await this.createAuditLog(user.id, 'USER_LOGIN_SUCCESS_VIA_OTP', currentIp);
     return {
       message: 'OTP Verified. Login successful',
@@ -202,11 +203,11 @@ export class AuthService {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       await this.redisClient.set(`otp:${finalUser.id}`, otp, 'EX', 300);
       await this.createAuditLog(user.id, 'OTP_SENT_NEW_IP', currentIp);
-      console.log(`\n--- [SECURITY ALERT] ---`);
-      console.log(`New Device/IP: ${currentIp}`);
-      console.log(`User ID: ${finalUser.id}`);
-      console.log(`Verification OTP: ${otp}`);
-      console.log(`------------------------\n`);
+      try{
+        await sendOtpEmail(user.email, otp);
+      }catch(err){
+        console.error("Mail service error", err)
+      }
       return {
         message: 'New device or IP detected. OTP verification required.',
         requiresOtp: true,
