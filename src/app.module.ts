@@ -8,6 +8,8 @@ import { PrismaService } from './prisma/prisma.service.js';
 import { ConfigModule, ConfigService } from '@nestjs/config'; 
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { UsersService } from './users/users.service.js';
+import { UsersController } from './users/users.controller';
+import { UsersModule } from './users/users.module';
 
 @Global()
 @Module({
@@ -24,8 +26,9 @@ import { UsersService } from './users/users.service.js';
     }),
     AuthModule,
     PrismaModule,
+    UsersModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, UsersController],
   providers: [AppService, UserService, PrismaService, UsersService],
 })
 export class AppModule { }

@@ -1,5 +1,5 @@
 import { InjectRedis } from '@nestjs-modules/ioredis';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
 import { Redis } from 'ioredis';
@@ -248,98 +248,65 @@ export class AuthService {
     };
   }
 
-  findAllUsers() {
-    return this.prisma.user.findMany({
-      include: { role: true },
+  async createRole(name: string, permissionNames: string[]) {
+    const permissions = await this.prisma.permission.findMany({
+      where: {
+        action: { in: permissionNames },
+      },
+    });
+
+    return this.prisma.role.create({
+      data: {
+        name,
+        permissions: {
+          create: permissions.map((p) => ({
+            permissionId: p.id,
+          })),
+        },
+      },
     });
   }
 
-  async findOneUsers(id: string) {
-    return this.prisma.user.findUnique({
-      where: { id },
-    });
-  }
-
-  async updateOneUsers(id: string, updateAuthDto: UpdateAuthDto) {
-    console.log('Target ID:', id);
-
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new Error(`User with ID ${id} not found`);
-    }
-
-    if (updateAuthDto.password) {
-      const salt = await bcrypt.genSalt(10);
-      updateAuthDto.password = await bcrypt.hash(updateAuthDto.password, salt);
-    }
-
-    const updateData: any = {
-      name: updateAuthDto.name,
-      email: updateAuthDto.email,
-      password: updateAuthDto.password,
-      image: updateAuthDto.imageUrl,
-    };
-
-    if (updateAuthDto.role) {
-      const roleRecord = await this.prisma.role.findUnique({
-        where: { name: updateAuthDto.role as string },
-      });
-
-      if (roleRecord) {
-        updateData.roleId = roleRecord.id;
-      } else {
-        throw new Error(`Role ${updateAuthDto.role} not found in database`);
-      }
-    }
+  async assignRole(userId: string, roleName: string) {
+    const role = await this.prisma.role.findUnique({ where: { name: roleName } });
+    if (!role) throw new NotFoundException('Role not found');
 
     return this.prisma.user.update({
-      where: { id },
-      data: updateData,
-      include: { role: true },
+      where: { id: userId },
+      data: { roleId: role.id }
     });
   }
 
-  async deletUser(userId: string, ip: string) {
-    const user = await this.prisma.user.update({
+  async logoutUser(userId: string, ip: string) {
+    await this.redisClient.del(`session:${userId}`);
+    await this.createAuditLog(userId, 'LOGOUT', ip);
+    return { message: 'Logged out successfully' };
+  }
+
+  async sendPasswordResetOtp(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await this.redisClient.set(`reset_otp:${email}`, otp, 'EX', 600);
+
+    await sendOtpEmail(email, otp);
+    return { message: 'Password reset OTP sent to email' };
+  }
+
+  async updateTwoFactor(userId: string, enable: boolean) {
+    const updatedUser = await this.prisma.user.update({
       where: { id: userId },
-      data: {
-        deletedAt: new Date(),
-        status: 'DORMANT',
-      },
+      data: { isTwoFactorEnabled: enable },
     });
 
-    await this.createAuditLog(userId, `USER_SOFT_DELETED_ID_${userId}`, ip);
+    const action = enable ? '2FA_ENABLED' : '2FA_DISABLED';
+    await this.createAuditLog(userId, action, 'INTERNAL_SYSTEM');
 
     return {
-      message: 'User successfully deactivated (Soft Delete)',
-      user,
+      message: `Two-Factor Authentication has been ${enable ? 'enabled' : 'disabled'} successfully.`,
+      isTwoFactorEnabled: updatedUser.isTwoFactorEnabled,
     };
   }
-
-  async deleteUserByAdmin(targetUserId: string, adminId: string, ip: string) {
-    const user = await this.prisma.user.update({
-      where: { id: targetUserId },
-      data: {
-        deletedAt: new Date(),
-        status: 'DORMANT',
-      },
-    });
-
-    await this.prisma.auditLog.create({
-      data: {
-        userId: adminId,
-        action: `ADMIN_DELETED_USER_ID_${targetUserId}`,
-        ip: ip,
-      },
-    });
-
-    return { message: 'User soft-deleted by admin successfully', user };
-  }
-
-  async getAuditLog() {
-    return await this.prisma.auditLog.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: { user: true },
-    });
-  }
+  
 }

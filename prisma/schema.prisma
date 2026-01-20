@@ -8,24 +8,25 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(uuid())
-  email         String     @unique
-  name          String?
-  emailVerified Boolean    @default(false)
-  image         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  roleId        Int?
-  status        UserStatus @default(ACTIVE)
-  public_id     String     @unique @default(uuid())
-  deletedAt     DateTime?
-  internal_id   String     @unique @default(nanoid())
-  password      String?
-  lastLoginIp   String?
-  accounts      Account[]
-  auditLogs     AuditLog[]
-  sessions      Session[]
-  role          Role?      @relation(fields: [roleId], references: [id])
+  id                String     @id @default(uuid())
+  email             String     @unique
+  name              String?
+  emailVerified     Boolean    @default(false)
+  image             String?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  roleId            Int?
+  status            UserStatus @default(ACTIVE)
+  isTwoFactorEnable Boolean    @default(false)
+  public_id         String     @unique @default(uuid())
+  deletedAt         DateTime?
+  internal_id       String     @unique @default(nanoid())
+  password          String?
+  lastLoginIp       String?
+  accounts          Account[]
+  auditLogs         AuditLog[]
+  sessions          Session[]
+  role              Role?      @relation(fields: [roleId], references: [id])
 }
 
 model Session {

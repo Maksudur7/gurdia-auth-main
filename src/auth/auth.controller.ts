@@ -1,12 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Ip } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { CreateAuthDto } from './dto/create-auth.dto.js';
-import { UpdateAuthDto } from './dto/update-auth.dto.js';
-import { PolicyGuard } from '../common/guards/policy.guard.js';
 import { SessionGuard } from '../common/guards/session.guard.js';
-import { Roles } from '../../src/common/decorators/roles.decorator.js';
-import { RolesGuard } from '../../src/common/guards/roles.guard.js';
-import { StatusGuard } from '../../src/common/guards/status.guard.js';
 import { PermissionGuard } from '../../src/common/guards/permission.guard.js';
 import { Permissions } from '../../src/common/decorators/permissions.decorator.js';
 
@@ -29,65 +24,36 @@ export class AuthController {
     return await this.authService.verifyOtpAndLogin(body.userId, body.otp, request.ip);
   }
 
-  @Get('users')
-  @UseGuards(SessionGuard, StatusGuard, RolesGuard, PermissionGuard)
-  @Roles('ADMIN', 'SUB_ADMIN')
-  @Permissions('user.read')
-  async findAll() {
-    return await this.authService.findAllUsers();
+  @Post('roles')
+  @UseGuards(SessionGuard, PermissionGuard)
+  @Permissions('role.create')
+  async createRole(@Body() body: { name: string; permissions: string[] }) {
+    return this.authService.createRole(body.name, body.permissions);
   }
 
-  @Get('users/:id')
-  @UseGuards(SessionGuard, StatusGuard, PolicyGuard)
-  async findOne(@Param('id') id: string) {
-    const result = await this.authService.findOneUsers(id);
-    return result
+  @Post('roles/assign')
+  @UseGuards(SessionGuard, PermissionGuard)
+  @Permissions('role.assign')
+  async assignRole(@Body() body: { userId: string; roleName: string }) {
+    return this.authService.assignRole(body.userId, body.roleName);
   }
 
-  @Patch('users/:id')
-  @UseGuards(SessionGuard, StatusGuard, PolicyGuard, PermissionGuard)
-  async update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return await this.authService.updateOneUsers(id, updateAuthDto);
-  }
-
-  @Delete('users/:id')
-  @UseGuards(SessionGuard, StatusGuard, PolicyGuard)
-  async remove(
-    @Req() req: any,
-    @Ip() ip: string
-  ) {
+  @Post('logout')
+  @UseGuards(SessionGuard)
+  async logout(@Req() req: any, @Ip() ip: string) {
     const userId = req.user.id;
-    return await this.authService.deletUser(userId, ip);
+    return await this.authService.logoutUser(userId, ip);
   }
 
-  @Delete('delete-user/:id')
-  @Roles('ADMIN')
-  @UseGuards(SessionGuard, RolesGuard, PermissionGuard) 
-  @Permissions('user.delete')
-  async removeUser(
-    @Param('id') targetId: string,
-    @Req() req: any,
-    @Ip() ip: string
-  ) {
-    const adminId = req.user.id;
-    return await this.authService.deleteUserByAdmin(targetId, adminId, ip);
+  @Post('forget-password')
+  async forgetPassword(@Body('email') email: string) {
+    return await this.authService.sendPasswordResetOtp(email);
   }
 
-
-  @Get('audit-logs')
-  @Roles('ADMIN')
-  @UseGuards(SessionGuard, RolesGuard, PermissionGuard)
-  @Permissions('admin.manage')
-  async getLogs() {
-    return await this.authService.getAuditLog();
+  @Patch('two-factor')
+  @UseGuards(SessionGuard)
+  async toggleTwoFactor(@Req() req: any, @Body('enable') enable: boolean) {
+    return this.authService.updateTwoFactor(req.user.id, enable);
   }
 
-  // just test for admin 
-
-  @Get('admin-only-data')
-  @Roles('ADMIN') // শুধু ADMIN এক্সেস পাবে
-  @UseGuards(SessionGuard, RolesGuard)
-  async getAdminData() {
-    return { message: "Welcome, Admin!" };
-  }
 }
