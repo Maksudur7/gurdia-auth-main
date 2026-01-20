@@ -87,6 +87,7 @@ export const UserScalarFieldEnum = {
   updatedAt: 'updatedAt',
   roleId: 'roleId',
   status: 'status',
+  isTwoFactorEnable: 'isTwoFactorEnable',
   public_id: 'public_id',
   deletedAt: 'deletedAt',
   internal_id: 'internal_id',

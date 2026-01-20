@@ -66,10 +66,8 @@ export class UsersController {
         return await this.usersService.getAuditLog();
     }
 
-    // just test for admin 
-
     @Get('admin-only-data')
-    @Roles('ADMIN') // শুধু ADMIN এক্সেস পাবে
+    @Roles('ADMIN')
     @UseGuards(SessionGuard, RolesGuard)
     async getAdminData() {
         return { message: "Welcome, Admin!" };

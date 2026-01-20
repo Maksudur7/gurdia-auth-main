@@ -44,6 +44,7 @@ export type UserMinAggregateOutputType = {
   updatedAt: Date | null
   roleId: number | null
   status: $Enums.UserStatus | null
+  isTwoFactorEnable: boolean | null
   public_id: string | null
   deletedAt: Date | null
   internal_id: string | null
@@ -61,6 +62,7 @@ export type UserMaxAggregateOutputType = {
   updatedAt: Date | null
   roleId: number | null
   status: $Enums.UserStatus | null
+  isTwoFactorEnable: boolean | null
   public_id: string | null
   deletedAt: Date | null
   internal_id: string | null
@@ -78,6 +80,7 @@ export type UserCountAggregateOutputType = {
   updatedAt: number
   roleId: number
   status: number
+  isTwoFactorEnable: number
   public_id: number
   deletedAt: number
   internal_id: number
@@ -105,6 +108,7 @@ export type UserMinAggregateInputType = {
   updatedAt?: true
   roleId?: true
   status?: true
+  isTwoFactorEnable?: true
   public_id?: true
   deletedAt?: true
   internal_id?: true
@@ -122,6 +126,7 @@ export type UserMaxAggregateInputType = {
   updatedAt?: true
   roleId?: true
   status?: true
+  isTwoFactorEnable?: true
   public_id?: true
   deletedAt?: true
   internal_id?: true
@@ -139,6 +144,7 @@ export type UserCountAggregateInputType = {
   updatedAt?: true
   roleId?: true
   status?: true
+  isTwoFactorEnable?: true
   public_id?: true
   deletedAt?: true
   internal_id?: true
@@ -243,6 +249,7 @@ export type UserGroupByOutputType = {
   updatedAt: Date
   roleId: number | null
   status: $Enums.UserStatus
+  isTwoFactorEnable: boolean
   public_id: string
   deletedAt: Date | null
   internal_id: string
@@ -283,6 +290,7 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roleId?: Prisma.IntNullableFilter<"User"> | number | null
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFilter<"User"> | boolean
   public_id?: Prisma.StringFilter<"User"> | string
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   internal_id?: Prisma.StringFilter<"User"> | string
@@ -304,6 +312,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   roleId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isTwoFactorEnable?: Prisma.SortOrder
   public_id?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   internal_id?: Prisma.SortOrder
@@ -330,6 +339,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roleId?: Prisma.IntNullableFilter<"User"> | number | null
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFilter<"User"> | boolean
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   password?: Prisma.StringNullableFilter<"User"> | string | null
   lastLoginIp?: Prisma.StringNullableFilter<"User"> | string | null
@@ -349,6 +359,7 @@ export type UserOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   roleId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  isTwoFactorEnable?: Prisma.SortOrder
   public_id?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   internal_id?: Prisma.SortOrder
@@ -374,6 +385,7 @@ export type UserScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   roleId?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   public_id?: Prisma.StringWithAggregatesFilter<"User"> | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   internal_id?: Prisma.StringWithAggregatesFilter<"User"> | string
@@ -390,6 +402,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -411,6 +424,7 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   roleId?: number | null
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -430,6 +444,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -451,6 +466,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -471,6 +487,7 @@ export type UserCreateManyInput = {
   updatedAt?: Date | string
   roleId?: number | null
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -487,6 +504,7 @@ export type UserUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -504,6 +522,7 @@ export type UserUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -521,6 +540,7 @@ export type UserCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   roleId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isTwoFactorEnable?: Prisma.SortOrder
   public_id?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   internal_id?: Prisma.SortOrder
@@ -542,6 +562,7 @@ export type UserMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   roleId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isTwoFactorEnable?: Prisma.SortOrder
   public_id?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   internal_id?: Prisma.SortOrder
@@ -559,6 +580,7 @@ export type UserMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   roleId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  isTwoFactorEnable?: Prisma.SortOrder
   public_id?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   internal_id?: Prisma.SortOrder
@@ -710,6 +732,7 @@ export type UserCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -730,6 +753,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   updatedAt?: Date | string
   roleId?: number | null
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -764,6 +788,7 @@ export type UserUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -784,6 +809,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -802,6 +828,7 @@ export type UserCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -822,6 +849,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   updatedAt?: Date | string
   roleId?: number | null
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -856,6 +884,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -876,6 +905,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -894,6 +924,7 @@ export type UserCreateWithoutRoleInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -913,6 +944,7 @@ export type UserUncheckedCreateWithoutRoleInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -962,6 +994,7 @@ export type UserScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   roleId?: Prisma.IntNullableFilter<"User"> | number | null
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFilter<"User"> | boolean
   public_id?: Prisma.StringFilter<"User"> | string
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   internal_id?: Prisma.StringFilter<"User"> | string
@@ -978,6 +1011,7 @@ export type UserCreateWithoutAccountsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -998,6 +1032,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   updatedAt?: Date | string
   roleId?: number | null
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -1032,6 +1067,7 @@ export type UserUpdateWithoutAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1052,6 +1088,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1070,6 +1107,7 @@ export type UserCreateManyRoleInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   status?: $Enums.UserStatus
+  isTwoFactorEnable?: boolean
   public_id?: string
   deletedAt?: Date | string | null
   internal_id?: string
@@ -1086,6 +1124,7 @@ export type UserUpdateWithoutRoleInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1105,6 +1144,7 @@ export type UserUncheckedUpdateWithoutRoleInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1124,6 +1164,7 @@ export type UserUncheckedUpdateManyWithoutRoleInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  isTwoFactorEnable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   public_id?: Prisma.StringFieldUpdateOperationsInput | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   internal_id?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1190,6 +1231,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   roleId?: boolean
   status?: boolean
+  isTwoFactorEnable?: boolean
   public_id?: boolean
   deletedAt?: boolean
   internal_id?: boolean
@@ -1212,6 +1254,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   roleId?: boolean
   status?: boolean
+  isTwoFactorEnable?: boolean
   public_id?: boolean
   deletedAt?: boolean
   internal_id?: boolean
@@ -1230,6 +1273,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   roleId?: boolean
   status?: boolean
+  isTwoFactorEnable?: boolean
   public_id?: boolean
   deletedAt?: boolean
   internal_id?: boolean
@@ -1248,6 +1292,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
   roleId?: boolean
   status?: boolean
+  isTwoFactorEnable?: boolean
   public_id?: boolean
   deletedAt?: boolean
   internal_id?: boolean
@@ -1255,7 +1300,7 @@ export type UserSelectScalar = {
   lastLoginIp?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "roleId" | "status" | "public_id" | "deletedAt" | "internal_id" | "password" | "lastLoginIp", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "roleId" | "status" | "isTwoFactorEnable" | "public_id" | "deletedAt" | "internal_id" | "password" | "lastLoginIp", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
@@ -1288,6 +1333,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     updatedAt: Date
     roleId: number | null
     status: $Enums.UserStatus
+    isTwoFactorEnable: boolean
     public_id: string
     deletedAt: Date | null
     internal_id: string
@@ -1729,6 +1775,7 @@ export interface UserFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly roleId: Prisma.FieldRef<"User", 'Int'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
+  readonly isTwoFactorEnable: Prisma.FieldRef<"User", 'Boolean'>
   readonly public_id: Prisma.FieldRef<"User", 'String'>
   readonly deletedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly internal_id: Prisma.FieldRef<"User", 'String'>

@@ -1,4 +1,4 @@
-// src/common/guards/policy.guard.ts
+
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PolicyEngine } from '../../auth/policies/policy.handler.js';

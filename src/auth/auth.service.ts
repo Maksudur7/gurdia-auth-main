@@ -5,7 +5,6 @@ import bcrypt from 'bcryptjs';
 import { Redis } from 'ioredis';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateAuthDto } from './dto/create-auth.dto.js';
-import { UpdateAuthDto } from './dto/update-auth.dto.js';
 import { sendOtpEmail } from '../common/mail.service.js';
 
 @Injectable()
@@ -297,7 +296,7 @@ export class AuthService {
   async updateTwoFactor(userId: string, enable: boolean) {
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
-      data: { isTwoFactorEnabled: enable },
+      data: { isTwoFactorEnable: enable },
     });
 
     const action = enable ? '2FA_ENABLED' : '2FA_DISABLED';
@@ -305,8 +304,8 @@ export class AuthService {
 
     return {
       message: `Two-Factor Authentication has been ${enable ? 'enabled' : 'disabled'} successfully.`,
-      isTwoFactorEnabled: updatedUser.isTwoFactorEnabled,
+      isTwoFactorEnabled: updatedUser.isTwoFactorEnable,
     };
   }
-  
+
 }
