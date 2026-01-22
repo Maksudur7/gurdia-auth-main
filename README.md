@@ -66,7 +66,7 @@ The system ensures security through a custom interceptor/guard layer:
     git clone https://github.com/Maksudur7/gurdia-auth-main.git
     ```
 2.  **Configure Environment:** Create a `.env` file based on `.env`.
-3.  ```bash
+      ```bash
     DATABASE_URL="postgresql://user:password@db:5432/gurdia_auth?schema=public"
     BETTER_AUTH_SECRET=o2kEvkMLITIPDMKZKCdJYlD2q2dHYsSM
     PORT=3000
@@ -75,16 +75,20 @@ The system ensures security through a custom interceptor/guard layer:
     EMAIL_USER= add a appemail 
     EMAIL_PASS=  add a password
     ```
-4.  **Start with Docker:**
+3. **Install all dependancy :**
+    ```bash
+    npm i
+    ```
+5.  **Start with Docker:**
     ```bash
     docker compose up -d --build
     ```
-5.  **Database Setup:**
+6.  **Database Setup:**
     ```bash
     docker compose exec app npx prisma generate
     docker compose exec gurdia_app npx prisma db push
     ```
-6. ** If any provlem in app let giv a command in terminal and see the provlem : **
+7. ** If any provlem in app let giv a command in terminal and see the provlem : **
    ```bash
    docker compose logs app
    ```
